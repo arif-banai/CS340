@@ -1,0 +1,16 @@
+Name: Arif Banai (User:baar7783, Pass:23437783)
+
+Design Overview: 
+	The program is entirely contained into one source file called QCShell. I used a while loop to implement the login portion, and then used a separate loop for the prompt and processing of commands. 
+	The input is split using a semicolon (;) as the delimiter, to handle multiple commands being passed into a single input line. The String array is then passed to the executeInput function, where the process is created for the command being executed. The process calls p.WaitFor(), with a max waiting time of 10 seconds in case of a hang up. 
+	The InputStream and ErrorStream (also an InputStream) from the process is passed into a BufferedReader and then each line of the BufferedReader is appended to a StringBuffer. The result of the BufferedReader(s) is then printed as a String if the respective BufferedReader is non-empty, marking the end of the function. 
+	The process is executed within a try block in order to catch IOException, which I used to catch an invalid command, as when I tested my program, typing an invalid command would result in an IOException. I also handled InterruptedException, as p.waitFor() throws this exception. 
+
+Complete specification: 
+	The main component of the shell (the loop for the prompt and input for commands) uses a while loop which will run forever until the user enters Ctrl+D or the 'quit' command is processed. Any string in the shell is turned into an array using the split function, this way, any input line with multiple commands separated by a semicolon will be run. The commands will run in order from left to right. Before a command is run from the array of commands, the command is trimmed, so a string of whitespace is reduced to an empty string. This allows the use of the isEmpty() function to check for empty strings, in which case, the loop for command processing will continue with the next string in the array. 
+	As stated previously, I used a catch block in order to detect an invalid command. I am not sure if this is the proper way of handling this, but it seems to work for this purpose.
+	Initially I did not understand why I could not get the 'cd' command to work. I then realized that I could set the working directory of the process I wanted to create. So to emulate the 'cd' command, I created a global variable absolutePath to store the current directory, and implemented 'cd' to change absolutePath according to the input given. The implementation allows the use of relative pathnames, absolute pathnames, and (..) to go to the parent directory, if it exists. If a directory/file does not exist, the command displays an error message. If no arguments are given to cd, it will change to the 'home' directory, which is the directory where the java program (the shell) originally initialized. This is given by System.getProperty("user.dir"). 
+	
+Known Bugs:
+	When using cd, if one were to use 'cd .' and then 'cd ..', you will not change to the parent directory, but if you use cd ./../ you will move to the parent directory. In fact, if you use 'cd .' an X amount of times, you can use 'cd ..' an X amount of times and still be in the same directory you started in. However, this can be fixed by using a relative pathname of absolute pathname
+	 
